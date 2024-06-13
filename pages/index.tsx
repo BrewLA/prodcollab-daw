@@ -1,12 +1,8 @@
 // pages/index.tsx
 
-'use client'
-
 import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
-import CustomCursor from '../components/CustomCursor';
 
-const socket = io('http://localhost:8080');
+const WebSocketUrl = 'wss://prodcollab-daw.glitch.me'; // Replace with your Glitch WebSocket URL
 
 const generateRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);
@@ -18,38 +14,57 @@ const generateRandomColor = () => {
 const Home: React.FC = () => {
   const [cursors, setCursors] = useState<{ [key: string]: { x: number; y: number; fill: string } }>({});
   const [myColor, setMyColor] = useState<string>(generateRandomColor());
+  const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    socket.on('cursorMove', (data: { clientId: string; x: number; y: number; fill: string }) => {
-      setCursors(prevCursors => ({
-        ...prevCursors,
-        [data.clientId]: { x: data.x, y: data.y, fill: data.fill },
-      }));
-    });
+    const websocket = new WebSocket(WebSocketUrl);
 
-    socket.on('cursorDisconnect', (clientId: string) => {
-      setCursors(prevCursors => {
-        const newCursors = { ...prevCursors };
-        delete newCursors[clientId];
-        return newCursors;
-      });
-    });
+    websocket.onopen = () => {
+      console.log('WebSocket connected');
+      setWs(websocket);
+    };
+
+    websocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      handleSocketMessage(data);
+    };
+
+    websocket.onclose = () => {
+      console.log('WebSocket disconnected');
+      setWs(null);
+    };
 
     return () => {
-      socket.disconnect();
+      if (ws) {
+        ws.close();
+      }
     };
   }, []);
 
+  const handleSocketMessage = (data: any) => {
+    const { clientId, x, y, fill } = data;
+    if (clientId) {
+      setCursors(prevCursors => ({
+        ...prevCursors,
+        [clientId]: { x, y, fill },
+      }));
+    }
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX: x, clientY: y } = e;
-    socket.emit('move', { x, y, fill: myColor });
+    if (ws) {
+      ws.send(JSON.stringify({ x, y, fill: myColor }));
+    }
   };
 
   return (
     <div className="relative h-screen flex justify-center items-center cursor-none" onMouseMove={handleMouseMove}>
       <h1 className="text-3xl">Hello World!</h1>
       {Object.keys(cursors).map(clientId => (
-        <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
+        <div key={clientId} className="absolute" style={{ left: cursors[clientId].x, top: cursors[clientId].y }}>
+          <div style={{ backgroundColor: cursors[clientId].fill, width: '10px', height: '10px' }} />
+        </div>
       ))}
     </div>
   );
