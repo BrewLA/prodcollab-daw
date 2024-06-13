@@ -50,7 +50,7 @@ const Home: React.FC = () => {
       {Object.keys(cursors).map(clientId => (
         <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
       ))}
-      <DraggableShape initialX={100} initialY={100} size={50} fillColor="blue" />
+      <DraggableShape initialX={100} initialY={100} size={50} fillColor="white" />
     </div>
   );
 };

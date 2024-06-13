@@ -43,6 +43,7 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill }) => {
         top: y,
         transform: 'translate(-50%, -50%)', // Center the cursor
         pointerEvents: 'none', // Ensure the cursor does not interfere with mouse events
+        zIndex: 100, // Ensure it's on top of other elements
       }}
     >
       <path
