@@ -1,12 +1,11 @@
 'use client'
-
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
 
-const socket = io(); // Connect to the default Glitch server port
+const socket = io('https://prodcollab-daw.glitch.me');
 
 const generateRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);
@@ -44,6 +43,7 @@ const Home: React.FC = () => {
     const { clientX: x, clientY: y } = e;
     socket.emit('move', { x, y, fill: myColor });
   };
+
   const tracks = [0, 1, 2, 3, 4]; // Example track positions
   const trackHeight = 80; // Adjust this based on your track height
 
@@ -81,8 +81,8 @@ const Home: React.FC = () => {
         ))}
       </div>
       {Object.keys(cursors).map(clientId => (
-          <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
-        ))}
+        <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
+      ))}
     </div>
   );
 };
