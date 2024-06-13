@@ -1,48 +1,48 @@
-// pages/index.tsx (or Home.tsx)
+//index.tsx
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '../components/DraggableShape';
 
-const socket = io('wss://prodcollab-daw.glitch.me');
-
-const generateRandomColor = () => {
-  const hue = Math.floor(Math.random() * 360);
-  const saturation = '100%';
-  const lightness = '50%';
-  return `hsl(${hue}, ${saturation}, ${lightness})`;
-};
-
 const Home: React.FC = () => {
   const [cursors, setCursors] = useState<{ [key: string]: { x: number; y: number; fill: string } }>({});
-  const [myColor, setMyColor] = useState<string>(generateRandomColor());
+  const [myColor, setMyColor] = useState<string>('hsl(210, 100%, 50%)'); // Example color
 
   useEffect(() => {
-    socket.on('cursorMove', (data: { clientId: string; x: number; y: number; fill: string }) => {
-      setCursors(prevCursors => ({
-        ...prevCursors,
-        [data.clientId]: { x: data.x, y: data.y, fill: data.fill },
-      }));
-    });
+    const socket = new WebSocket('wss://prodcollab-daw.glitch.me'); // WebSocket connection
 
-    socket.on('cursorDisconnect', (clientId: string) => {
-      setCursors(prevCursors => {
-        const newCursors = { ...prevCursors };
-        delete newCursors[clientId];
-        return newCursors;
-      });
-    });
+    socket.onopen = () => {
+      console.log('WebSocket connected');
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'cursorMove') {
+        setCursors(prevCursors => ({
+          ...prevCursors,
+          [data.clientId]: { x: data.x, y: data.y, fill: data.fill },
+        }));
+      } else if (data.type === 'cursorDisconnect') {
+        setCursors(prevCursors => {
+          const newCursors = { ...prevCursors };
+          delete newCursors[data.clientId];
+          return newCursors;
+        });
+      }
+    };
 
     return () => {
-      socket.disconnect();
+      socket.close();
     };
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX: x, clientY: y } = e;
-    socket.emit('move', { x, y, fill: myColor });
+    const data = { type: 'move', x, y, fill: myColor };
+    const socket = new WebSocket('wss://prodcollab-daw.glitch.me'); // WebSocket connection
+    socket.send(JSON.stringify(data));
+    socket.close();
   };
 
   const tracks = [0, 1, 2, 3, 4]; // Example track positions
