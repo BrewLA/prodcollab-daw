@@ -8,15 +8,17 @@ import DraggableShape from '../components/DraggableShape';
 const Home: React.FC = () => {
   const [cursors, setCursors] = useState<{ [key: string]: { x: number; y: number; fill: string } }>({});
   const [myColor, setMyColor] = useState<string>('hsl(210, 100%, 50%)'); // Example color
+  const [socket, setSocket] = useState<WebSocket | null>(null); // State to hold the WebSocket instance
 
   useEffect(() => {
-    const socket = new WebSocket('wss://prodcollab-daw.glitch.me'); // WebSocket connection
+    const newSocket = new WebSocket('wss://prodcollab-daw.glitch.me'); // Create a new WebSocket instance
 
-    socket.onopen = () => {
+    newSocket.onopen = () => {
       console.log('WebSocket connected');
+      setSocket(newSocket); // Set the WebSocket instance in state when connected
     };
 
-    socket.onmessage = (event) => {
+    newSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'cursorMove') {
         setCursors(prevCursors => ({
@@ -33,16 +35,16 @@ const Home: React.FC = () => {
     };
 
     return () => {
-      socket.close();
+      newSocket.close(); // Close the WebSocket connection when component unmounts
     };
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { clientX: x, clientY: y } = e;
-    const data = { type: 'move', x, y, fill: myColor };
-    const socket = new WebSocket('wss://prodcollab-daw.glitch.me'); // WebSocket connection
-    socket.send(JSON.stringify(data));
-    socket.close();
+    if (socket && socket.readyState === WebSocket.OPEN) { // Check if WebSocket is open
+      const { clientX: x, clientY: y } = e;
+      const data = { type: 'move', x, y, fill: myColor };
+      socket.send(JSON.stringify(data)); // Send data through WebSocket
+    }
   };
 
   const tracks = [0, 1, 2, 3, 4]; // Example track positions
