@@ -1,4 +1,4 @@
-'use client'
+// index.tsx
 
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client'; // Import socket.io-client module here
@@ -91,7 +91,7 @@ const Home: React.FC = () => {
       </div>
       {/* Render custom cursors based on socket.io data */}
       {Object.keys(cursors).map(clientId => (
-        <CustomCursor userId={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
+        <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
       ))}
     </div>
   );

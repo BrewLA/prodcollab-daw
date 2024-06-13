@@ -4,10 +4,9 @@ interface CustomCursorProps {
   x: number;
   y: number;
   fill: string;
-  userId: string;
 }
 
-const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill, userId }) => {
+const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill}) => {
   const [isDragging, setIsDragging] = useState(false);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
@@ -99,10 +98,6 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill, userId }) => {
         strokeWidth="1.7321"
       />
       </svg>
-      <title>{userId}</title>
-      <text className="p-4" x="12" y="16" fill="#FFFFFF" textAnchor="middle" fontSize="10px" fontWeight="bold">
-        {userId}
-      </text>
     </div>
   );
 };
