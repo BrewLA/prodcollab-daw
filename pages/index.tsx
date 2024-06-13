@@ -1,59 +1,55 @@
-//index.tsx
+'use client'
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
-import DraggableShape from '../components/DraggableShape';
+import DraggableShape from '@/components/DraggableShape';
+import Image from 'next/image';
 
+const socket = io('http://localhost:8080');
+
+const generateRandomColor = () => {
+  const hue = Math.floor(Math.random() * 360);
+  const saturation = '100%';
+  const lightness = '50%';
+  return `hsl(${hue}, ${saturation}, ${lightness})`;
+};
 
 const Home: React.FC = () => {
   const [cursors, setCursors] = useState<{ [key: string]: { x: number; y: number; fill: string } }>({});
-  const [myColor, setMyColor] = useState<string>('hsl(210, 100%, 50%)'); // Example color
-  const [socket, setSocket] = useState<WebSocket | null>(null); // State to hold the WebSocket instance
+  const [myColor, setMyColor] = useState<string>(generateRandomColor());
 
   useEffect(() => {
-    const newSocket = new WebSocket('wss://prodcollab-daw.glitch.me'); // Create a new WebSocket instance
+    socket.on('cursorMove', (data: { clientId: string; x: number; y: number; fill: string }) => {
+      setCursors(prevCursors => ({
+        ...prevCursors,
+        [data.clientId]: { x: data.x, y: data.y, fill: data.fill },
+      }));
+    });
 
-    newSocket.onopen = () => {
-      console.log('WebSocket connected');
-      setSocket(newSocket); // Set the WebSocket instance in state when connected
-    };
-
-    newSocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'cursorMove') {
-        setCursors(prevCursors => ({
-          ...prevCursors,
-          [data.clientId]: { x: data.x, y: data.y, fill: data.fill },
-        }));
-      } else if (data.type === 'cursorDisconnect') {
-        setCursors(prevCursors => {
-          const newCursors = { ...prevCursors };
-          delete newCursors[data.clientId];
-          return newCursors;
-        });
-      }
-    };
+    socket.on('cursorDisconnect', (clientId: string) => {
+      setCursors(prevCursors => {
+        const newCursors = { ...prevCursors };
+        delete newCursors[clientId];
+        return newCursors;
+      });
+    });
 
     return () => {
-      newSocket.close(); // Close the WebSocket connection when component unmounts
+      socket.disconnect();
     };
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (socket && socket.readyState === WebSocket.OPEN) { // Check if WebSocket is open
-      const { clientX: x, clientY: y } = e;
-      const data = { type: 'move', x, y, fill: myColor };
-      socket.send(JSON.stringify(data)); // Send data through WebSocket
-    }
+    const { clientX: x, clientY: y } = e;
+    socket.emit('move', { x, y, fill: myColor });
   };
-
   const tracks = [0, 1, 2, 3, 4]; // Example track positions
   const trackHeight = 80; // Adjust this based on your track height
 
   return (
-    <div className="relative h-screen flex flex-col justify-start items-center cursor-none" onMouseMove={handleMouseMove}>
-      <div className="flex flex-row w-full justify-between items-center p-12">
+    <div className="relative w-full h-screen flex flex-col justify-start items-center cursor-none" onMouseMove={handleMouseMove}>
+      <div className="flex flex-row relative w-full justify-between items-center p-12">
         <div className="flex flex-col">
           <h1 className="text-2xl">Welcome to ProdCollab!</h1>
           <h2 className="text-sm text-gray-500">Made with ❤️ by the © Brew.LA team</h2>
@@ -65,7 +61,7 @@ const Home: React.FC = () => {
           alt="Company logo" 
         />
       </div>
-      <div className="relative w-full h-full overflow-hidden">
+      <div className="flex justify-center items-center relative w-full h-full overflow-hidden">
         {tracks.map((track, index) => (
           <div
             key={index}
@@ -83,10 +79,10 @@ const Home: React.FC = () => {
             />
           </div>
         ))}
-        {Object.keys(cursors).map(clientId => (
+      </div>
+      {Object.keys(cursors).map(clientId => (
           <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
         ))}
-      </div>
     </div>
   );
 };
