@@ -48,11 +48,14 @@ const Home: React.FC = () => {
 
   return (
     <div className="relative h-screen flex justify-center items-center cursor-none" onMouseMove={handleMouseMove}>
-      <h1 className="text-3xl">Hello World!</h1>
+      <div className="flex flex-col gap-4 justify-center items-center">
+        <h1 className="text-3xl pointer-events-none">Welcome to ProdCollab! (Early Access)</h1>
+        <h2 className="text-gray-500 tracking-tight">Made with ❤️ by the © Brew.LA team</h2>
+      </div>
       {Object.keys(cursors).map(clientId => (
         <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
       ))}
-      <DraggableShape initialX={100} initialY={100} />
+      <DraggableShape initialX={100} initialY={100} width={226} height={76} fillColor="transparent" />
     </div>
   );
 };
