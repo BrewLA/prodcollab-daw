@@ -7,7 +7,7 @@ import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
 
 // Initialize socket.io-client with proper options
-const socket = io("https://prodcollab-daw.glitch.me", {
+const socket = io("https://prodcollab-daw-d90a591b2014.herokuapp.com", {
   withCredentials: true,
   extraHeaders: {
     "my-custom-header": "abcd"
@@ -91,7 +91,7 @@ const Home: React.FC = () => {
       </div>
       {/* Render custom cursors based on socket.io data */}
       {Object.keys(cursors).map(clientId => (
-        <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
+        <CustomCursor userId={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
       ))}
     </div>
   );

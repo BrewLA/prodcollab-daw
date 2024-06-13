@@ -1,14 +1,13 @@
-// components/CustomCursor.tsx
-
 import React, { useState, useEffect } from 'react';
 
 interface CustomCursorProps {
   x: number;
   y: number;
   fill: string;
+  userId: string;
 }
 
-const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill }) => {
+const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill, userId }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
@@ -76,27 +75,35 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill }) => {
   };
 
   return (
-    <svg
+    <div style={{
+      position: 'absolute',
+      left: `${x}px`,
+      top: `${y}px`,
+      transform: 'translate(-50%, -50%)', // Center the cursor
+      width: '24px',
+      height: '24px',
+      overflow: 'visible'
+    }}>
+      <svg
       width="24"
       height="24"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{
-        position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
-        transform: 'translate(-50%, -50%)' // Center the cursor
-      }}
       onMouseDown={handleMouseDown}
-    >
+      >
       <path
         d="M6.10494 7.13869L7.95153 18.2509C8.22089 19.8718 10.3849 20.2418 11.1775 18.8025L13.4697 14.6399L18.1372 13.746C19.751 13.437 20.0678 11.2646 18.6095 10.5075L8.61167 5.31745C7.34486 4.65982 5.87096 5.73067 6.10494 7.13869Z"
         fill={fill}
         stroke={strokeColor}
         strokeWidth="1.7321"
       />
-    </svg>
+      </svg>
+      <title>{userId}</title>
+      <text className="p-4" x="12" y="16" fill="#FFFFFF" textAnchor="middle" fontSize="10px" fontWeight="bold">
+        {userId}
+      </text>
+    </div>
   );
 };
 
