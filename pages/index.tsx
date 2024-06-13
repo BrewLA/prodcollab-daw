@@ -1,3 +1,5 @@
+// pages/index.tsx (or Home.tsx)
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import io from 'socket.io-client';
@@ -65,23 +67,16 @@ const Home: React.FC = () => {
           <div
             key={index}
             className="w-full h-16 border-b border-secondary"
-            style={{ position: 'relative', top: `${track * trackHeight}px` }}
+            style={{ position: 'absolute', top: `${track * trackHeight * 1.5}px`, width: '100%' }}
           >
             <DraggableShape
-              initialX={100}
-              initialY={track + 20} // Adjust initial position within the track
-              width={226}
-              height={76}
-              fillColor=""
-              gridSize={20}
-              onSnap={(snapX, snapY) => {
-                console.log(`Snapped to: (${snapX}, ${snapY})`);
-                // Handle snapping logic here, if needed
-              }}
-              onTrackChange={(newTrack) => {
-                console.log(`Moved to track ${newTrack}`);
-                // Handle track change logic here, if needed
-              }}
+              key={index}
+              initialX={100} // Adjust initial X position as needed
+              initialY={track + 24} // Adjust initial Y position within the track
+              width={226} // Adjust width of the draggable shape
+              height={76} // Adjust height of the draggable shape
+              fillColor="" // Set fill color as needed
+              gridSize={12} // Set grid size for snapping if required
             />
           </div>
         ))}

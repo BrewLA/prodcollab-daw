@@ -1,6 +1,4 @@
-// components/DraggableShape.tsx
-
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 interface DraggableShapeProps {
   initialX: number;
@@ -8,57 +6,41 @@ interface DraggableShapeProps {
   width: number;
   height: number;
   fillColor: string;
-  gridSize: number;
-  onSnap?: (snapX: number, snapY: number) => void; // Define onSnap as an optional callback
-  onTrackChange?: (newTrack: number) => void; // Define onTrackChange as an optional callback
+  gridSize: number; // Add gridSize prop
 }
 
-const DraggableShape: React.FC<DraggableShapeProps> = ({
-  initialX,
-  initialY,
-  width,
-  height,
-  fillColor,
-  gridSize,
-  onSnap,
-  onTrackChange,
-}) => {
+const DraggableShape: React.FC<DraggableShapeProps> = ({ initialX, initialY, width, height, fillColor, gridSize }) => {
+  const [position, setPosition] = useState<{ x: number; y: number }>({ x: initialX, y: initialY });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [cursorOffset, setCursorOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
   const svgRef = useRef<SVGSVGElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: initialX, y: initialY });
 
-  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    setIsDragging(true);
+  const snapToGrid = (value: number, gridSize: number) => {
+    return Math.round(value / gridSize) * gridSize;
   };
 
-  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    if (isDragging && svgRef.current) {
-      const newX = e.clientX - svgRef.current.getBoundingClientRect().left - width / 2;
-      const newY = e.clientY - svgRef.current.getBoundingClientRect().top - height / 2;
-      setPosition({ x: newX, y: newY });
+  const handleMouseDown = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+    const svg = svgRef.current;
+    if (svg && svg.contains(e.target as Node)) {
+      setIsDragging(true);
+      const { clientX, clientY } = e;
+      setCursorOffset({ x: clientX - position.x, y: clientY - position.y });
     }
   };
 
-  const handleMouseUp = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    setIsDragging(false);
-    // Perform snapping logic if onSnap is defined
-    if (onSnap) {
-      const snapX = Math.round(position.x / gridSize) * gridSize;
-      const snapY = Math.round(position.y / gridSize) * gridSize;
-      onSnap(snapX, snapY);
-    }
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+  const handleMouseMove = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     if (isDragging) {
-      setIsDragging(false);
-      // Perform snapping logic if onSnap is defined
-      if (onSnap) {
-        const snapX = Math.round(position.x / gridSize) * gridSize;
-        const snapY = Math.round(position.y / gridSize) * gridSize;
-        onSnap(snapX, snapY);
-      }
+      const { clientX, clientY } = e;
+      setPosition({
+        x: snapToGrid(clientX - cursorOffset.x, gridSize),
+        y: snapToGrid(clientY - cursorOffset.y, gridSize),
+      });
     }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   return (
@@ -85,7 +67,6 @@ const DraggableShape: React.FC<DraggableShapeProps> = ({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      {/* Your SVG shapes */}
       <rect x="0.947078" y="1.0578" width="223.984" height="73.9843" rx="7.61804" stroke="#28292B" strokeWidth="1.01574" />
       <rect x="18.7224" y="15.6619" width="5.59703" height="44.7762" rx="2.79851" fill="#2C80FF" />
       <rect x="31.7822" y="21.7252" width="5.59703" height="32.6493" rx="2.79851" fill="#2C80FF" />
