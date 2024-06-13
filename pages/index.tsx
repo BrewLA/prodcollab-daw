@@ -6,7 +6,7 @@ import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
 
-const socket = io('http://localhost:8080');
+const socket = io(); // Connect to the default Glitch server port
 
 const generateRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);
