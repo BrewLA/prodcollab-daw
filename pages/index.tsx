@@ -1,6 +1,5 @@
-// pages/index.tsx
-
 import React, { useEffect, useState } from 'react';
+import CustomCursor from '../components/CustomCursor'; // Adjust path as necessary
 
 const WebSocketUrl = 'wss://prodcollab-daw.glitch.me'; // Replace with your Glitch WebSocket URL
 
@@ -62,9 +61,7 @@ const Home: React.FC = () => {
     <div className="relative h-screen flex justify-center items-center cursor-none" onMouseMove={handleMouseMove}>
       <h1 className="text-3xl">Hello World!</h1>
       {Object.keys(cursors).map(clientId => (
-        <div key={clientId} className="absolute" style={{ left: cursors[clientId].x, top: cursors[clientId].y }}>
-          <div style={{ backgroundColor: cursors[clientId].fill, width: '10px', height: '10px' }} />
-        </div>
+        <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
       ))}
     </div>
   );
