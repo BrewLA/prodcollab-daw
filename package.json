@@ -20,7 +20,8 @@
     "react-dom": "^18",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
-    "webpack": "^5.92.0"
+    "webpack": "^5.92.0",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.7",

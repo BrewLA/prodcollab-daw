@@ -5,6 +5,7 @@ import Image from 'next/image';
 import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '../components/DraggableShape';
 
+
 const Home: React.FC = () => {
   const [cursors, setCursors] = useState<{ [key: string]: { x: number; y: number; fill: string } }>({});
   const [myColor, setMyColor] = useState<string>('hsl(210, 100%, 50%)'); // Example color
