@@ -1,11 +1,18 @@
 'use client'
+
 import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import io from 'socket.io-client'; // Import socket.io-client module here
 import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
 
-const socket = io('wss://prodcollab-daw.glitch.me');
+// Initialize socket.io-client with proper options
+const socket = io("https://prodcollab-daw.glitch.me", {
+  withCredentials: true,
+  extraHeaders: {
+    "my-custom-header": "abcd"
+  }
+});
 
 const generateRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);
@@ -19,6 +26,7 @@ const Home: React.FC = () => {
   const [myColor, setMyColor] = useState<string>(generateRandomColor());
 
   useEffect(() => {
+    // Set up event listeners for socket.io events
     socket.on('cursorMove', (data: { clientId: string; x: number; y: number; fill: string }) => {
       setCursors(prevCursors => ({
         ...prevCursors,
@@ -34,10 +42,11 @@ const Home: React.FC = () => {
       });
     });
 
+    // Clean up socket connection on component unmount
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, []); // Empty dependency array ensures useEffect runs only once
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX: x, clientY: y } = e;
@@ -80,6 +89,7 @@ const Home: React.FC = () => {
           </div>
         ))}
       </div>
+      {/* Render custom cursors based on socket.io data */}
       {Object.keys(cursors).map(clientId => (
         <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
       ))}
