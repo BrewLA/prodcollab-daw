@@ -11,39 +11,46 @@ interface DraggableShapeProps {
 
 const DraggableShape: React.FC<DraggableShapeProps> = ({ initialX, initialY, size, fillColor }) => {
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: initialX, y: initialY });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [cursorOffset, setCursorOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
-    const offsetX = e.nativeEvent.offsetX;
-    const offsetY = e.nativeEvent.offsetY;
+  const handleMouseDown = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+    setIsDragging(true);
+    const { clientX, clientY } = e;
+    setCursorOffset({ x: clientX - position.x, y: clientY - position.y });
+  };
 
-    const handleDragMove = (moveEvent: MouseEvent) => {
-      const x = moveEvent.clientX - offsetX;
-      const y = moveEvent.clientY - offsetY;
-      setPosition({ x, y });
-    };
+  const handleMouseMove = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+    if (isDragging) {
+      const { clientX, clientY } = e;
+      setPosition({ x: clientX - cursorOffset.x, y: clientY - cursorOffset.y });
+    }
+  };
 
-    const handleDragEnd = () => {
-      document.removeEventListener('mousemove', handleDragMove);
-      document.removeEventListener('mouseup', handleDragEnd);
-    };
-
-    document.addEventListener('mousemove', handleDragMove);
-    document.addEventListener('mouseup', handleDragEnd);
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   return (
-    <div
-      className="absolute cursor-move"
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      fill={fillColor}
+      xmlns="http://www.w3.org/2000/svg"
       style={{
+        position: 'absolute',
         left: position.x,
         top: position.y,
-        width: size,
-        height: size,
-        backgroundColor: fillColor,
-        zIndex: 100,
+        zIndex: 50, // Set z-index to 50
+        cursor: isDragging ? 'grabbing' : 'grab',
       }}
-      onMouseDown={handleDragStart}
-    />
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+    >
+      <rect width={size} height={size} />
+    </svg>
   );
 };
 
