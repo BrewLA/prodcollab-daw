@@ -6,7 +6,7 @@ import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
 
-const socket = io('https://prodcollab-daw.glitch.me');
+const socket = io('wss://prodcollab-daw.glitch.me');
 
 const generateRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);
