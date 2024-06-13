@@ -6,8 +6,8 @@ import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
 
 const socketUrl = process.env.NODE_ENV === 'production'
-  ? process.env.NEXT_PUBLIC_WEBSOCKET_URL_PROD
-  : process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+  ? process.env.NEXT_PUBLIC_WEBSOCKET_URL_PROD || 'wss://prodcollab-daw.fly.dev/ws'
+  : process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'http://localhost:8080';
 
 const socket = io(socketUrl);
 
