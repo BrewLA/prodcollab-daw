@@ -6,7 +6,7 @@ const socketIo = require('socket.io');
 const server = http.createServer();
 const io = socketIo(server, {
   cors: {
-    origin: "https://prodcollab-daw.vercel.app", // Adjust as necessary
+    origin: "http://localhost:3000", // Adjust as necessary
     methods: ["GET", "POST"]
   }
 });
@@ -24,6 +24,6 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(8080, () => {
-  console.log('Server is listening on port 8080');
+server.listen(5000, () => {
+  console.log('Server is listening on port 5000');
 });
