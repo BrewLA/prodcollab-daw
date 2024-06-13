@@ -1,15 +1,12 @@
 // pages/index.tsx
+
 'use client'
 
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
 
-const socketUrl = process.env.NODE_ENV === 'production'
-  ? process.env.NEXT_PUBLIC_WEBSOCKET_URL_PROD || 'wss://prodcollab-daw.fly.dev/ws'
-  : process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'http://localhost:8080';
-
-const socket = io(socketUrl);
+const socket = io('ws://localhost:8080');
 
 const generateRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);

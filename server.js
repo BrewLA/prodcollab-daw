@@ -6,7 +6,7 @@ const socketIo = require('socket.io');
 const server = http.createServer();
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000", // Adjust as necessary
+    origin: "https://prodcollab-daw.vercel.app", // Adjust as necessary
     methods: ["GET", "POST"]
   }
 });
