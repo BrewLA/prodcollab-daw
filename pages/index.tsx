@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
 
-const socket = io('ws://localhost:8080');
+const socket = io('http://localhost:8080');
 
 const generateRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);
