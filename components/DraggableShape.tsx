@@ -1,4 +1,6 @@
-import React, { useState, useRef } from 'react';
+// components/DraggableShape.tsx
+
+import React, { useRef, useState } from 'react';
 
 interface DraggableShapeProps {
   initialX: number;
@@ -7,9 +9,8 @@ interface DraggableShapeProps {
   height: number;
   fillColor: string;
   gridSize: number;
-  trackHeight: number;
-  onTrackChange: (newTrackIndex: number) => void;
-  tracks?: number[]; // Make tracks optional
+  onSnap?: (snapX: number, snapY: number) => void; // Define onSnap as an optional callback
+  onTrackChange?: (newTrack: number) => void; // Define onTrackChange as an optional callback
 }
 
 const DraggableShape: React.FC<DraggableShapeProps> = ({
@@ -19,58 +20,44 @@ const DraggableShape: React.FC<DraggableShapeProps> = ({
   height,
   fillColor,
   gridSize,
-  trackHeight,
+  onSnap,
   onTrackChange,
-  tracks = [], // Default to empty array if not provided
 }) => {
-  const [position, setPosition] = useState<{ x: number; y: number }>({ x: initialX, y: initialY });
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [cursorOffset, setCursorOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [isOverTrack, setIsOverTrack] = useState<boolean>(true);
-
   const svgRef = useRef<SVGSVGElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: initialX, y: initialY });
 
-  const snapToGrid = (value: number, gridSize: number): number => {
-    return Math.round(value / gridSize) * gridSize;
+  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    setIsDragging(true);
   };
 
-  const handleMouseDown = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-    const svg = svgRef.current;
-    if (svg && svg.contains(e.target as Node)) {
-      setIsDragging(true);
-      const { clientX, clientY } = e;
-      setCursorOffset({ x: clientX - position.x, y: clientY - position.y });
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-    if (isDragging) {
-      const { clientX, clientY } = e;
-      const newX = snapToGrid(clientX - cursorOffset.x, gridSize);
-      const newY = clientY - cursorOffset.y;
-
-      // Determine if currently over a track
-      const newTrackIndex = tracks.findIndex((trackY) => newY > trackY && newY < trackY + trackHeight);
-      setIsOverTrack(newTrackIndex !== -1);
-
+  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    if (isDragging && svgRef.current) {
+      const newX = e.clientX - svgRef.current.getBoundingClientRect().left - width / 2;
+      const newY = e.clientY - svgRef.current.getBoundingClientRect().top - height / 2;
       setPosition({ x: newX, y: newY });
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     setIsDragging(false);
+    // Perform snapping logic if onSnap is defined
+    if (onSnap) {
+      const snapX = Math.round(position.x / gridSize) * gridSize;
+      const snapY = Math.round(position.y / gridSize) * gridSize;
+      onSnap(snapX, snapY);
+    }
+  };
 
-    // Snap back to the current track if not over any track
-    if (!isOverTrack && tracks.length > 0) {
-      const currentTrackY = tracks.reduce((closestY, trackY) => {
-        return Math.abs(position.y - trackY) < Math.abs(position.y - closestY) ? trackY : closestY;
-      }, tracks[0]);
-
-      setPosition((prevPosition) => ({
-        ...prevPosition,
-        x: snapToGrid(prevPosition.x, gridSize), // Snap X position back as well
-        y: currentTrackY,
-      }));
+  const handleMouseLeave = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    if (isDragging) {
+      setIsDragging(false);
+      // Perform snapping logic if onSnap is defined
+      if (onSnap) {
+        const snapX = Math.round(position.x / gridSize) * gridSize;
+        const snapY = Math.round(position.y / gridSize) * gridSize;
+        onSnap(snapX, snapY);
+      }
     }
   };
 
