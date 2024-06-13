@@ -1,11 +1,8 @@
-// pages/index.tsx
-
-'use client'
-
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
-import DraggableShape from '../components/DraggableShape'; // Adjust path as necessary
+import DraggableShape from '../components/DraggableShape';
 
 const socket = io('wss://prodcollab-daw.glitch.me');
 
@@ -46,16 +43,52 @@ const Home: React.FC = () => {
     socket.emit('move', { x, y, fill: myColor });
   };
 
+  const tracks = [0, 1, 2, 3, 4]; // Example track positions
+  const trackHeight = 80; // Adjust this based on your track height
+
   return (
-    <div className="relative h-screen flex justify-center items-center cursor-none" onMouseMove={handleMouseMove}>
-      <div className="flex flex-col gap-4 justify-center items-center">
-        <h1 className="text-3xl pointer-events-none">Welcome to ProdCollab! (Early Access)</h1>
-        <h2 className="text-gray-500 tracking-tight">Made with ❤️ by the © Brew.LA team</h2>
+    <div className="relative h-screen flex flex-col justify-start items-center cursor-none" onMouseMove={handleMouseMove}>
+      <div className="flex flex-row w-full justify-between items-center p-12">
+        <div className="flex flex-col">
+          <h1 className="text-2xl">Welcome to ProdCollab!</h1>
+          <h2 className="text-sm text-gray-500">Made with ❤️ by the © Brew.LA team</h2>
+        </div>
+        <Image
+          src="/images/prodcollab-logo.png"
+          width={48}
+          height={48}
+          alt="Company logo" 
+        />
       </div>
-      {Object.keys(cursors).map(clientId => (
-        <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
-      ))}
-      <DraggableShape initialX={100} initialY={100} width={226} height={76} fillColor="transparent" />
+      <div className="relative w-full h-full overflow-hidden">
+        {tracks.map((track, index) => (
+          <div
+            key={index}
+            className="w-full h-16 border-b border-secondary"
+            style={{ position: 'relative', top: `${track * trackHeight}px` }}
+          >
+            <DraggableShape
+              initialX={100}
+              initialY={track + 20} // Adjust initial position within the track
+              width={226}
+              height={76}
+              fillColor=""
+              gridSize={20}
+              onSnap={(snapX, snapY) => {
+                console.log(`Snapped to: (${snapX}, ${snapY})`);
+                // Handle snapping logic here, if needed
+              }}
+              onTrackChange={(newTrack) => {
+                console.log(`Moved to track ${newTrack}`);
+                // Handle track change logic here, if needed
+              }}
+            />
+          </div>
+        ))}
+        {Object.keys(cursors).map(clientId => (
+          <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
+        ))}
+      </div>
     </div>
   );
 };
