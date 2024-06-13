@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface CustomCursorProps {
   x: number;
@@ -6,10 +6,11 @@ interface CustomCursorProps {
   fill: string;
 }
 
-const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill}) => {
+const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   const calculateStrokeColor = (color: string) => {
     const rgbColor = color.match(/\d+/g);
@@ -29,10 +30,10 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill}) => {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (isDragging) {
-        const newX = e.clientX - offsetX;
-        const newY = e.clientY - offsetY;
-        // Update cursor position
+      if (isDragging && cursorRef.current) {
+        const rect = cursorRef.current.getBoundingClientRect();
+        const newX = e.clientX - offsetX - rect.width / 2;
+        const newY = e.clientY - offsetY - rect.height / 2;
         moveCursor(newX, newY);
       }
     };
@@ -50,53 +51,53 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ x, y, fill}) => {
     };
   }, [isDragging, offsetX, offsetY]);
 
-  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault(); // Prevent default to avoid unexpected browser behavior
     setIsDragging(true);
-    setOffsetX(e.nativeEvent.offsetX);
-    setOffsetY(e.nativeEvent.offsetY);
-  };
-
-  const moveCursor = (newX: number, newY: number) => {
-    // Update cursor position
-    // You might want to limit newX and newY to stay within the viewport or specific boundaries
-    // For simplicity, we update position directly, but you may need additional logic for boundary checking
-    // Example:
-    // const clampedX = Math.max(0, Math.min(window.innerWidth - 24, newX));
-    // const clampedY = Math.max(0, Math.min(window.innerHeight - 24, newY));
-    // setCursorPosition(clampedX, clampedY);
-    // Adjust coordinates to stay within bounds as needed
-
-    // For now, directly updating the position
-    // Ensure to update state only when dragging
-    if (isDragging) {
-      // Implement logic to update cursor position here
+    const rect = cursorRef.current?.getBoundingClientRect();
+    if (rect) {
+      setOffsetX(e.clientX - rect.left);
+      setOffsetY(e.clientY - rect.top);
     }
   };
 
+  const moveCursor = (newX: number, newY: number) => {
+    requestAnimationFrame(() => {
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
+      }
+    });
+  };
+
   return (
-    <div style={{
-      position: 'absolute',
-      left: `${x}px`,
-      top: `${y}px`,
-      transform: 'translate(-50%, -50%)', // Center the cursor
-      width: '24px',
-      height: '24px',
-      overflow: 'visible'
-    }}>
-      <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <div
+      ref={cursorRef}
+      style={{
+        position: 'fixed', // Change to fixed to avoid issues with scrolling affecting cursor position
+        left: '0',
+        top: '0',
+        transform: `translate(${x}px, ${y}px)`, // Center the cursor
+        width: '24px',
+        height: '24px',
+        overflow: 'visible',
+        zIndex: 9999, // Ensure cursor is above other elements
+        pointerEvents: 'none', // Prevent cursor from capturing mouse events
+      }}
       onMouseDown={handleMouseDown}
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-      <path
-        d="M6.10494 7.13869L7.95153 18.2509C8.22089 19.8718 10.3849 20.2418 11.1775 18.8025L13.4697 14.6399L18.1372 13.746C19.751 13.437 20.0678 11.2646 18.6095 10.5075L8.61167 5.31745C7.34486 4.65982 5.87096 5.73067 6.10494 7.13869Z"
-        fill={fill}
-        stroke={strokeColor}
-        strokeWidth="1.7321"
-      />
+        <path
+          d="M6.10494 7.13869L7.95153 18.2509C8.22089 19.8718 10.3849 20.2418 11.1775 18.8025L13.4697 14.6399L18.1372 13.746C19.751 13.437 20.0678 11.2646 18.6095 10.5075L8.61167 5.31745C7.34486 4.65982 5.87096 5.73067 6.10494 7.13869Z"
+          fill={fill}
+          stroke={strokeColor}
+          strokeWidth="1.7321"
+        />
       </svg>
     </div>
   );
