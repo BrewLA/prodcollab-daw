@@ -1,10 +1,9 @@
 // pages/index.tsx
 
-'use client'
-
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import CustomCursor from '../components/CustomCursor';
+import DraggableShape from '../components/DraggableShape'; // Adjust path as necessary
 
 const socket = io('wss://prodcollab-daw.glitch.me');
 
@@ -51,6 +50,7 @@ const Home: React.FC = () => {
       {Object.keys(cursors).map(clientId => (
         <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
       ))}
+      <DraggableShape initialX={100} initialY={100} size={50} fillColor="blue" />
     </div>
   );
 };
