@@ -5,6 +5,7 @@ import io from 'socket.io-client'; // Import socket.io-client module here
 import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // Initialize socket.io-client with proper options
 const socket = io("https://prodcollab-daw-d90a591b2014.herokuapp.com", {
@@ -57,18 +58,20 @@ const Home: React.FC = () => {
   const trackHeight = 80; // Adjust this based on your track height
 
   return (
-    <div className="relative w-full h-screen flex flex-col justify-start items-center cursor-none" onMouseMove={handleMouseMove}>
+    <div className="relative w-full h-screen flex flex-col justify-start items-center" onMouseMove={handleMouseMove}>
       <div className="flex flex-row relative w-full justify-between items-center p-12">
         <div className="flex flex-col">
           <h1 className="text-2xl">Welcome to ProdCollab!</h1>
           <h2 className="text-sm text-gray-500">Made with ❤️ by the © Brew.LA team</h2>
         </div>
+        <Link href="https://main.dan6kz7trfabu.amplifyapp.com">
         <Image
           src="/images/prodcollab-logo.png"
           width={48}
           height={48}
           alt="Company logo" 
         />
+        </Link>
       </div>
       <div className="flex justify-center items-center relative w-full h-full overflow-hidden">
         {tracks.map((track, index) => (
