@@ -57,7 +57,8 @@ const DraggableShape: React.FC<DraggableShapeProps> = ({ initialX, initialY, wid
         left: position.x,
         top: position.y,
         zIndex: 50,
-        transform: isDragging ? 'scale(1.1)' : 'scale(1)',
+        cursor: isDragging ? 'grabbing' : 'grab', // Hide cursor when dragging
+        transform: isDragging ? 'scale(1.025)' : 'scale(1)',
         opacity: isDragging ? 0.8 : 1,
         transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
       }}

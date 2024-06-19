@@ -6,6 +6,7 @@ import CustomCursor from '../components/CustomCursor';
 import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
 import Link from 'next/link';
+import Layout from './layout';
 
 // Initialize socket.io-client with proper options
 const socket = io("https://prodcollab-daw-d90a591b2014.herokuapp.com", {
@@ -59,9 +60,9 @@ const Home: React.FC = () => {
 
   return (
     <div className="relative w-full h-screen flex flex-col justify-start items-center" onMouseMove={handleMouseMove}>
-      <div className="flex flex-row relative w-full justify-between items-center p-12">
+      <div className="flex flex-row relative w-full justify-between items-center px-8 py-6">
         <div className="flex flex-col">
-          <h1 className="text-2xl">Welcome to ProdCollab!</h1>
+          <h1 className="text-xl text-white">Welcome to ProdCollab!</h1>
           <h2 className="text-sm text-gray-500">Made with ❤️ by the © Brew.LA team</h2>
         </div>
         <Link href="https://main.dan6kz7trfabu.amplifyapp.com">
@@ -73,7 +74,8 @@ const Home: React.FC = () => {
         />
         </Link>
       </div>
-      <div className="flex justify-center items-center relative w-full h-full overflow-hidden">
+      <Layout />
+      {/* <div className="flex justify-center items-center relative w-full h-full overflow-hidden">
         {tracks.map((track, index) => (
           <div
             key={index}
@@ -91,7 +93,7 @@ const Home: React.FC = () => {
             />
           </div>
         ))}
-      </div>
+      </div> */}
       {/* Render custom cursors based on socket.io data */}
       {Object.keys(cursors).map(clientId => (
         <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
