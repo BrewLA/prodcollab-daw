@@ -1,5 +1,4 @@
 import AudioImport from '@/components/AudioImport';
-// import MainWorkspace from '@/components/MainWorkspace';
 import AudioWorkspace from '@/components/AudioWorkspace';
 import MixControls from '@/components/MixControls';
 import TrackInfo from '@/components/TrackInfo';
