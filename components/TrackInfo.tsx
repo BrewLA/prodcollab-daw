@@ -1,21 +1,14 @@
 import React from 'react';
+import TabList from './TabList';
 
 function TrackInfo() {
+    const tabs = ['Bar', 'Wave'];
+
     return (
         <div className="w-60 h-full flex-col border-r border-secondary bg-secondary justify-start items-start inline-flex">
             <div className="self-stretch h-14 px-4 border-b border-secondary justify-between items-center inline-flex">
                 <div className="text-white text-xs">Audio View</div>
-                <div className="p-1 rounded-md border border-secondary justify-start items-center gap-2 flex">
-                    <div className="px-1 py-0.5 bg-zinc-800 rounded justify-center items-center gap-2.5 flex">
-                        <div className="text-white text-xs">Bar</div>
-                    </div>
-                    <div className="px-1 py-0.5 opacity-50 rounded justify-center items-center gap-2.5 flex">
-                        <div className="text-white text-xs">Wave</div>
-                    </div>
-                    <div className="px-1 py-0.5 opacity-50 rounded justify-center items-center gap-2.5 flex">
-                        <div className="text-white text-xs">Text</div>
-                    </div>
-                </div>
+                <TabList tabs={tabs} />
             </div>
             <div className="p-2 bg-secondary flex-col justify-start items-start gap-2 flex">
                 <div className="self-stretch h-20 p-2 bg-secondary rounded-lg border border-secondary justify-between items-start inline-flex">

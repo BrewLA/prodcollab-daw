@@ -6,7 +6,7 @@ const MixControls = () => {
     return (
         <div className="flex gap-2 p-2 sticky bottom-0 bg-secondary border-t border-secondary">
             <div className="flex  justify-between  gap-2 overflow-x-auto">
-            {mixControlsArray.map((control, index) => (
+            {mixControlsArray.map((index) => (
                 <div key={index} className="h-60 p-2 bg-secondary rounded-lg border border-secondary flex-col justify-start items-start gap-4 inline-flex">
                     <div className="w-20 self-stretch justify-start items-start gap-8 inline-flex">
                         <div className="h-auto w-full justify-between items-center flex">

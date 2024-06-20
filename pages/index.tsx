@@ -1,9 +1,8 @@
-// index.tsx
+// pages/index.tsx
 
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client'; // Import socket.io-client module here
 import CustomCursor from '../components/CustomCursor';
-import DraggableShape from '@/components/DraggableShape';
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from './layout';
@@ -55,9 +54,6 @@ const Home: React.FC = () => {
     socket.emit('move', { x, y, fill: myColor });
   };
 
-  const tracks = [0, 1, 2, 3, 4]; // Example track positions
-  const trackHeight = 80; // Adjust this based on your track height
-
   return (
     <div className="relative w-full h-screen flex flex-col justify-start items-center" onMouseMove={handleMouseMove}>
       <div className="flex flex-row relative w-full justify-between items-center px-8 py-6">
@@ -66,37 +62,24 @@ const Home: React.FC = () => {
           <h2 className="text-sm text-gray-500">Made with ❤️ by the © Brew.LA team</h2>
         </div>
         <Link href="https://main.dan6kz7trfabu.amplifyapp.com">
-        <Image
-          src="/images/prodcollab-logo.png"
-          width={48}
-          height={48}
-          alt="Company logo" 
-        />
+          <Image
+            src="/images/prodcollab-logo.png"
+            width={48}
+            height={48}
+            alt="Company logo"
+          />
         </Link>
       </div>
       <Layout />
-      {/* <div className="flex justify-center items-center relative w-full h-full overflow-hidden">
-        {tracks.map((track, index) => (
-          <div
-            key={index}
-            className="w-full h-16 border-b border-secondary"
-            style={{ position: 'absolute', top: `${track * trackHeight * 1.5}px`, width: '100%' }}
-          >
-            <DraggableShape
-              key={index}
-              initialX={100} // Adjust initial X position as needed
-              initialY={track + 24} // Adjust initial Y position within the track
-              width={226} // Adjust width of the draggable shape
-              height={76} // Adjust height of the draggable shape
-              fillColor="" // Set fill color as needed
-              gridSize={12} // Set grid size for snapping if required
-            />
-          </div>
-        ))}
-      </div> */}
-      {/* Render custom cursors based on socket.io data */}
       {Object.keys(cursors).map(clientId => (
-        <CustomCursor key={clientId} x={cursors[clientId].x} y={cursors[clientId].y} fill={cursors[clientId].fill} />
+        <CustomCursor
+          key={clientId}
+          userId={clientId}
+          x={cursors[clientId].x}
+          y={cursors[clientId].y}
+          fill={cursors[clientId].fill}
+          isLocalUser={clientId === socket.id}
+        />
       ))}
     </div>
   );
