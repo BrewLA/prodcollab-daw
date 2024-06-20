@@ -4,7 +4,7 @@ const MixControls = () => {
     const mixControlsArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
     return (
-        <div className="flex gap-2 p-2 sticky bottom-0 bg-secondary border-t border-secondary">
+        <div className="flex w-full max-w-full gap-2 p-2 sticky bottom-0 bg-secondary border-t border-secondary z-50">
             <div className="flex  justify-between  gap-2 overflow-x-auto">
             {mixControlsArray.map((index) => (
                 <div key={index} className="h-60 p-2 bg-secondary rounded-lg border border-secondary flex-col justify-start items-start gap-4 inline-flex">

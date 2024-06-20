@@ -1,5 +1,6 @@
 import AudioImport from '@/components/AudioImport';
-import MainWorkspace from '@/components/MainWorkspace';
+// import MainWorkspace from '@/components/MainWorkspace';
+import AudioWorkspace from '@/components/AudioWorkspace';
 import MixControls from '@/components/MixControls';
 import TrackInfo from '@/components/TrackInfo';
 import React from 'react';
@@ -11,7 +12,7 @@ const Layout = () => {
                 {/* Audio Import Sidebar */}
                 <AudioImport />
                 <TrackInfo />
-                <MainWorkspace />
+                <AudioWorkspace />
             </div>
             <MixControls />
         </div>

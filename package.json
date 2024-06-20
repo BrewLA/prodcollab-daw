@@ -10,6 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@types/socket.io-client": "^3.0.0",
     "classnames": "^2.5.1",
     "cors": "^2.8.5",
@@ -24,6 +27,7 @@
     "react-dom": "^18",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
+    "wavesurfer.js": "^7.7.15",
     "webpack": "^5.92.0",
     "ws": "^8.17.0"
   },
