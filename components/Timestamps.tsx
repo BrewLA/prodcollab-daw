@@ -26,7 +26,7 @@ const Timestamps: React.FC<TimestampsProps> = ({ containerWidth, duration }) => 
                 {timestamps.map((number) => (
                     <div
                         key={number}
-                        className={`text-xs font-medium pr-4 ${number % 4 === 1 ? 'text-white' : 'opacity-50 text-white'}`}
+                        className={`text-xs font-medium pr-4 select-none ${number % 4 === 1 ? 'text-white' : 'opacity-50 text-white'}`}
                     >
                         {number}
                     </div>

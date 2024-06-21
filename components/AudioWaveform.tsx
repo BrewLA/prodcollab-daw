@@ -15,8 +15,8 @@ interface AudioWaveformProps {
 }
 
 const AudioWaveform: React.FC<AudioWaveformProps> = ({ audioFiles, isPlaying, setDuration, wavesurfers }) => {
-    const initializeWaveSurfer = (containerRef: HTMLDivElement | null, audioUrl: string, projectId: string) => {
-        if (containerRef && !wavesurfers.current[projectId]) {
+    const initializeWaveSurfer = (containerRef: HTMLDivElement | null, audioUrl: string, fileId: string) => {
+        if (containerRef && !wavesurfers.current[fileId]) {
             const wavesurfer = WaveSurfer.create({
                 container: containerRef,
                 waveColor: 'gray',
@@ -31,21 +31,20 @@ const AudioWaveform: React.FC<AudioWaveformProps> = ({ audioFiles, isPlaying, se
 
             wavesurfer.load(audioUrl);
             wavesurfer.on('ready', () => {
-                console.log(`WaveSurfer for ${projectId} is ready`);
                 const duration = wavesurfer.getDuration();
                 setDuration(duration);
                 containerRef.style.width = `${duration * 20}px`; // Set the width based on duration
             });
 
-            wavesurfers.current[projectId] = wavesurfer;
+            wavesurfers.current[fileId] = wavesurfer;
         }
     };
 
-    const removeWaveSurfer = (projectId: string) => {
-        const wavesurfer = wavesurfers.current[projectId];
+    const removeWaveSurfer = (fileId: string) => {
+        const wavesurfer = wavesurfers.current[fileId];
         if (wavesurfer) {
-            wavesurfer.pause(); // Pause instead of destroy
-            // Optionally, you can hide the container or manage its visibility
+            wavesurfer.destroy();
+            delete wavesurfers.current[fileId];
         }
     };
 
@@ -56,18 +55,35 @@ const AudioWaveform: React.FC<AudioWaveformProps> = ({ audioFiles, isPlaying, se
         });
 
         return () => {
-            // No need to destroy wavesurfers here
+            audioFiles.forEach((audioFile) => {
+                removeWaveSurfer(audioFile.id);
+            });
         };
     }, [audioFiles, setDuration, wavesurfers]);
+
+    useEffect(() => {
+        Object.values(wavesurfers.current).forEach((wavesurfer) => {
+            if (wavesurfer) {
+                isPlaying ? wavesurfer.play() : wavesurfer.pause();
+            }
+        });
+    }, [isPlaying]);
 
     return (
         <div className="w-auto flex flex-col">
             {audioFiles.map((audioFile) => (
                 <div
                     key={audioFile.id}
-                    className="w-auto relative h-20 px-2 py-4 bg-secondary rounded-lg border border-secondary mt-2 mr-2 ml-2"
+                    id={`waveform-container-${audioFile.id}`}
+                    className="inline-block relative h-20 px-2 py-4 bg-secondary rounded-lg border border-secondary mt-2 mr-2 ml-2 group"
                 >
-                    <div id={`waveform-${audioFile.id}`} className="waveform-container" />
+                    <button
+                        onClick={() => removeWaveSurfer(audioFile.id)}
+                        className="absolute top-0 left-0 m-2 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                        &#10005;
+                    </button>
+                    <div id={`waveform-${audioFile.id}`} />
                 </div>
             ))}
         </div>
@@ -75,6 +91,7 @@ const AudioWaveform: React.FC<AudioWaveformProps> = ({ audioFiles, isPlaying, se
 };
 
 export default AudioWaveform;
+
 
 
 

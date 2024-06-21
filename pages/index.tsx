@@ -56,12 +56,12 @@ const Home: React.FC = () => {
 
   return (
     <div className="relative w-full h-screen flex flex-col justify-start items-center" onMouseMove={handleMouseMove}>
-      <div className="flex flex-row relative w-full justify-between items-center p-4">
+      <div className="flex flex-row relative w-full justify-between items-center px-4">
         <div className="flex flex-col">
-          <h1 className="text-xl text-white">Welcome to ProdCollab!</h1>
+          {/* <h1 className="text-xl text-white">Welcome to ProdCollab!</h1> */}
           <h2 className="text-sm text-gray-500">Made with ❤️ by the © Brew.LA team</h2>
         </div>
-        <Link href="https://main.dan6kz7trfabu.amplifyapp.com">
+        <Link href="https://main.dan6kz7trfabu.amplifyapp.com" target="_blank">
           <Image
             src="/images/prodcollab-logo.png"
             width={48}
