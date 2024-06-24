@@ -61,11 +61,12 @@ const Home: React.FC = () => {
           {/* <h1 className="text-xl text-white">Welcome to ProdCollab!</h1> */}
           <h2 className="text-sm text-gray-500">Made with ❤️ by the © Brew.LA team</h2>
         </div>
-        <Link href="https://main.dan6kz7trfabu.amplifyapp.com" target="_blank">
+        <Link href="#">
           <Image
             src="/images/prodcollab-logo.png"
-            width={48}
-            height={48}
+            className="m-2"
+            width={36}
+            height={36}
             alt="Company logo"
           />
         </Link>
