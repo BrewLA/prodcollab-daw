@@ -70,16 +70,16 @@ const AudioWaveform: React.FC<AudioWaveformProps> = ({ audioFiles, isPlaying, se
     }, [isPlaying]);
 
     return (
-        <div className="w-auto flex flex-col">
+        <div className="w-auto inline-flex flex-col">
             {audioFiles.map((audioFile) => (
                 <div
                     key={audioFile.id}
                     id={`waveform-container-${audioFile.id}`}
-                    className="inline-block relative h-20 px-2 py-4 bg-secondary rounded-lg border border-secondary mt-2 mr-2 ml-2 group"
+                    className="relative h-20 px-2 py-4 bg-secondary rounded-lg border border-secondary mt-2 mr-2 ml-2 group"
                 >
                     <button
                         onClick={() => removeWaveSurfer(audioFile.id)}
-                        className="absolute top-0 left-0 m-2 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        className="absolute top-0 left-1.5 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     >
                         &#10005;
                     </button>

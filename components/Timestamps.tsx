@@ -6,7 +6,7 @@ interface TimestampsProps {
 }
 
 const Timestamps: React.FC<TimestampsProps> = ({ containerWidth, duration }) => {
-    const minCount = 30;
+    const minCount = 120;
     const [timestamps, setTimestamps] = useState<number[]>([]);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ const Timestamps: React.FC<TimestampsProps> = ({ containerWidth, duration }) => 
     }, [containerWidth, duration]);
 
     return (
-        <div className="w-auto min-w-full h-14 px-4 bg-secondary border-b border-secondary justify-start items-center gap-2.5 flex">
+        <div className="w-auto h-14 px-4 bg-secondary border-b border-secondary justify-start items-center gap-2.5 inline-flex">
             <div className="w-full h-6 justify-between items-center flex">
                 {timestamps.map((number) => (
                     <div

@@ -121,7 +121,7 @@ const TrackInfo: React.FC<TrackInfoProps> = () => {
                 <div className="text-white text-xs">Audio View</div>
                 <TabList tabs={tabs} />
             </div>
-            <div className="p-2 bg-secondary flex-col justify-start items-start gap-2 flex">
+            <div className="p-2 flex-col justify-start items-start gap-2 flex">
                 <div className="self-stretch h-20 p-2 bg-secondary rounded-lg border border-secondary justify-between items-start inline-flex">
                     <div className="w-36 flex-col justify-start items-start gap-2 inline-flex">
                         <input
